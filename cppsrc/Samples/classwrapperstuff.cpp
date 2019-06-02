@@ -23,8 +23,20 @@ ClassWrapperStuff::ClassWrapperStuff(const Napi::CallbackInfo& info) : Napi::Obj
   Napi::Env env = info.Env();
   Napi::HandleScope scope(env);
 
-  if(info.Length() != 1 || !info[0].IsString()) {
-    Napi::TypeError::New(env, "String expected!").ThrowAsJavaScriptException();
+  if(info.Length() != 1) {
+    Napi::TypeError::New(env, "Only one arg expected!").ThrowAsJavaScriptException();
+  }
+
+  if(!info[0].IsString()) {
+    Napi::Object parent = info[0].As<Napi::Object>();
+
+    ClassWrapperStuff* parent_wrapper_stuff =
+      Napi::ObjectWrap<ClassWrapperStuff>::Unwrap(parent);
+
+    MyClass* parent_myclass_instance = parent_wrapper_stuff->GetInternalInstance();
+    std::string bamboo = parent_myclass_instance->getValue();
+    this->instanceOfMyAwesomeClass_ = new MyClass(parent_myclass_instance->getValue());
+    return;
   }
 
   Napi::String pandaling = info[0].As<Napi::String>();
@@ -48,3 +60,8 @@ Napi::Value ClassWrapperStuff::Append(const Napi::CallbackInfo& info) {
 
   return Napi::String::New(info.Env(), bamboo);
 };
+
+
+MyClass* ClassWrapperStuff::GetInternalInstance() {
+  return this->instanceOfMyAwesomeClass_;
+}

@@ -10,4 +10,8 @@ console.log("After adding another panda: ", myPandas.append("Bei Bei"));
 myPandas.append("Basi");
 console.log("And a third: ", myPandas.bamboo());
 
+const newFromExisting = new testAddon.MyAwesomeClass(myPandas);
+console.log("Testing class intitial value for derived instance:")
+console.log(newFromExisting.bamboo());
+
 module.exports = testAddon;
